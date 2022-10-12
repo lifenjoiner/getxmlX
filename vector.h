@@ -1,5 +1,6 @@
 //
 #include <malloc.h>
+#include <tchar.h>
 #include <string.h>
 //#include <assert.h>
 
@@ -9,6 +10,16 @@ typedef struct{
     size_t capacity;
 } Vector;
 
+void vector_free(Vector *v) {
+    size_t i;
+    for (i = 0; i < v->length; i++) {
+        free(v->items[i]);
+    }
+    free(v->items);
+    v->length = 0;
+    v->items = NULL;
+}
+
 Vector _tcs_split(const _TCHAR* str, const _TCHAR* delims) {
     Vector Str;
     _TCHAR *str_t, *p;
@@ -17,19 +28,16 @@ Vector _tcs_split(const _TCHAR* str, const _TCHAR* delims) {
     str_t = _tcsdup(str);
     //
     Str.length = 0;
-    Str.items = (void**)calloc(1, sizeof(void**));
-    Str.items[0] = str_t;
+    Str.items = NULL;
     //
-    p = _tcstok(str_t, delims);
-    while (p != NULL) {
+    for (p = str_t; p = _tcstok(p, delims), p != NULL; p = NULL) {
         pp = realloc(Str.items, sizeof(void*) * (Str.length+1));
         //assert(pp != NULL);
-        Str.items = (void**)pp;
-        Str.items[Str.length] = p;
+        Str.items = (void **)pp;
+        Str.items[Str.length] = _tcsdup(p);
         Str.length++;
-        p = _tcstok(NULL, delims);
     }
-    if (Str.length == 0) {Str.length = 1;}
+    free(str_t);
     return Str;
 }
 
