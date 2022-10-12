@@ -136,7 +136,13 @@ void SelectionAllNamespaces(
     IXMLDOMElement *dom
 ) {
     HRESULT hr;
+#ifdef _MSC_VER
+    MSXML2::
+#endif
     IXMLDOMNamedNodeMap *pDomAttrs = NULL;
+#ifdef _MSC_VER
+    MSXML2::
+#endif
     IXMLDOMNode *pA = NULL;
     BSTR xml;
     long i, l;
@@ -319,12 +325,14 @@ UNKNOWN:
             i = n;
             break;
         }
+        vector_free(&opr);
     }
+    vector_free(&operations);
 }
 
 /**/
 void help(const _TCHAR *app) {
-    _tprintf(_T("Get information from xml. msxml 6 based, XPath flavor. v0.1.0 by YX Hao\n"));
+    _tprintf(_T("Get information from xml. msxml 6 based, XPath flavor. v0.1.1 by YX Hao\n"));
     _tprintf(_T("Usage: %s <operations> <xml-file | URL>\n"), app);
     _tprintf(_T("operation examples:\n"));
     _tprintf(_T("    selectNodes(data).length\n"));
